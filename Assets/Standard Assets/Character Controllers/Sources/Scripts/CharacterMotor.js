@@ -4,7 +4,7 @@
 
 // Does this script currently respond to input?
 var canControl : boolean = true;
-
+var overGame : GameObject;
 var useFixedUpdate : boolean = true;
 
 // For the next variables, @System.NonSerialized tells Unity to not serialize the variable or show it in the inspector view.
@@ -176,6 +176,7 @@ private var tr : Transform;
 private var controller : CharacterController;
 
 function Awake () {
+    overGame.SetActive(false);
 	controller = GetComponent (CharacterController);
 	tr = transform;
 }
@@ -332,11 +333,13 @@ function FixedUpdate () {
 }
 
 function Update () {
+
 	if (!useFixedUpdate)
 		UpdateFunction();
 }
 
 private function ApplyInputVelocityChange (velocity : Vector3) {	
+
 	if (!canControl)
 		inputMoveDirection = Vector3.zero;
 	
@@ -383,6 +386,12 @@ private function ApplyInputVelocityChange (velocity : Vector3) {
 		velocity.y = Mathf.Min(velocity.y, 0);
 	}
 	
+	if (overGame.activeSelf) {
+	    velocity.x = 0;
+	    velocity.y = 0;
+	    velocity.z = 0;
+	}
+
 	return velocity;
 }
 
@@ -414,6 +423,12 @@ private function ApplyGravityAndJumping (velocity : Vector3) {
 		
 		// Make sure we don't fall any faster than maxFallSpeed. This gives our character a terminal velocity.
 		velocity.y = Mathf.Max (velocity.y, -movement.maxFallSpeed);
+
+		if (overGame.activeSelf) {
+		    velocity.x = 0;
+		    velocity.y = 0;
+		    velocity.z = 0;
+		}
 	}
 		
 	if (grounded) {

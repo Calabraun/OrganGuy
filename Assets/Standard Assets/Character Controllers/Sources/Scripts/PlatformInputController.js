@@ -1,20 +1,28 @@
 // This makes the character turn to face the current movement speed per default.
 var autoRotate : boolean = true;
 var maxRotationSpeed : float = 360;
+var overGame : GameObject;
 
 private var motor : CharacterMotor;
+private var countdownScript : Component;
 
 // Use this for initialization
 function Awake () {
-	motor = GetComponent(CharacterMotor);
+    motor = GetComponent(CharacterMotor);
+    overGame.SetActive(false);
 }
 
 // Update is called once per frame
 function Update () {
+
+    if (overGame.activeSelf == true) return;
+
 	// Get the input vector from kayboard or analog stick
 	var directionVector = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
 	
 	if (directionVector != Vector3.zero) {
+
+		animation.Play();
 		// Get the length of the directon vector and then normalize it
 		// Dividing by the length is cheaper than normalizing when we already have the length anyway
 		var directionLength = directionVector.magnitude;
@@ -29,6 +37,10 @@ function Update () {
 		
 		// Multiply the normalized direction vector by the modified length
 		directionVector = directionVector * directionLength;
+	}
+	
+	else {
+		animation.Stop();
 	}
 	
 	// Rotate the input vector into camera space so up is camera's up and right is camera's right
